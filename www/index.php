@@ -229,10 +229,16 @@ if (array_key_exists($idioma, $productos)) {
 		<main class="mb-3 row">
 			<div class="container-lg col-md-4" id="sidebar">
 		<?php if ($prd == '') { // no hay información de idioma ?>
-		<div class="list-group w-50 mx-auto text-center">
-		<?php foreach ($idiomas as $codigo => $titulo) { // recorro todos los elementos del array $idiomas  ?>
-			<a href="?l=<?php echo $codigo; ?>" class="list-group-item list-group-item-action"><?php echo $titulo; ?></a>
-		<?php } ?>
+			<div class="list-group w-100 mx-auto text-center" id="idiomas">
+        <?php foreach ($productos as $idioma => $productosIdioma): ?>
+            <a href="#" class="list-group-item list-group-item-action" data-lang="<?php echo $idioma; ?>"><?php echo $idioma; ?></a>
+        <?php endforeach; ?>
+    </div>
+
+    <ul id="productos" class="w-100 mx-auto">
+        <!-- Los productos se mostrarán aquí -->
+    </ul>
+		
 		</div>
 		<?php } else { // mostramos las instrucciones en el idioma ?>
 
@@ -244,18 +250,6 @@ if (array_key_exists($idioma, $productos)) {
 			<div class="list-group w-50 mx-auto text-center">
 				<!-- Imprimir enlaces para cambiar de idioma -->
 
-			<?php foreach ($productos_idioma as $producto) { 
-					// Obtener el valor de 'l' del GET, o establecerlo en 'en' por defecto si no está definido
-					$idioma = isset($_GET['l']) ? $_GET['l'] : 'en';
-
-					// Obtener el valor de 'p' del GET, o establecerlo en 1 por defecto si no está definido
-					$producto_index = isset($_GET['p']) ? $_GET['p'] : 1;
-
-					// Crear el enlace dinámico con los valores de 'l' y 'p' en el formato deseado
-					$enlace = "?l=$idioma&p=$producto_index";				
-				?>
-       		 <a href="<?php echo $enlace; ?>" class="list-group-item list-group-item-action"> <?php echo $producto; ?> </a>
-   		   <?php } ?>
 
 			</div>
 		<?php } else{ // mostramos las instrucciones en el idioma?>
@@ -311,15 +305,11 @@ if (array_key_exists($idioma, $productos)) {
 					}
 					return $(tags);
 				};
-
-
 				$('main table').addClass('table table-bordered  table-striped').wrap('<div class="table-responsive"></div>');
-				//$('big').replaceTagName('span').addClass('color-montibello');
-
 			});
 		</script>
-		<script>
-		document.addEventListener("DOMContentLoaded", function() {
+<script>
+document.addEventListener("DOMContentLoaded", function() {
 			var url = window.location.href;
 			var sidebar = document.getElementById("sidebar");
 			if (url.includes("?p=") || url.includes("&p=")) {
@@ -327,7 +317,49 @@ if (array_key_exists($idioma, $productos)) {
 			} else {
 				sidebar.style.display = "block";
 			}
-		});
-		</script>
+});
+</script>
+
+<script>
+ var productos = <?php echo json_encode($productos); ?>;
+ function mostrarProductos(event) {
+    event.preventDefault();
+    var lang = event.target.getAttribute('data-lang');
+    var productosEnIdioma = productos[lang];
+    if (productosEnIdioma) {
+        var idiomasMenu = document.getElementById('idiomas');
+        var productosList = document.getElementById('productos');
+        idiomasMenu.style.display = 'none';
+        var volverButton = document.createElement('button');
+        volverButton.textContent = 'Volver a idiomas';
+        volverButton.addEventListener('click', volverAIdiomas);
+        productosList.appendChild(volverButton);
+        productosEnIdioma.forEach(function (producto, index) {
+            var li = document.createElement('li');
+            var productoLink = document.createElement('a');
+            productoLink.href = `?l=${lang}&p=${index + 1}`;
+            productoLink.textContent = producto;
+            productoLink.classList.add('list-group-item', 'list-group-item-action');
+            li.appendChild(productoLink);
+            productosList.appendChild(li);
+        });
+        productosList.style.display = 'block';
+    }
+}
+function volverAIdiomas() {
+    var idiomasMenu = document.getElementById('idiomas');
+    var productosList = document.getElementById('productos');
+    while (productosList.firstChild) {
+        productosList.removeChild(productosList.firstChild);
+    }
+    idiomasMenu.style.display = 'block';
+    this.style.display = 'none';
+}
+ var idiomas = document.querySelectorAll('#idiomas a');
+idiomas.forEach(function (idioma) {
+idioma.addEventListener('click', mostrarProductos);
+ });
+</script>
+
 	</body>
 </html>
