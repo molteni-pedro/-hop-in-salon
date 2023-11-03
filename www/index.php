@@ -240,11 +240,9 @@ if (array_key_exists($idioma, $productos)) {
 			</div>
 			<!-- /end col-md-6 -->
 			<div class="container-lg col-md-8">
-			<?php if ($prd == '') { // no hay información de idioma ?>
+			<?php if ($lang == '')  { // no hay información de idioma ?>
 			<div class="list-group w-50 mx-auto text-center">
 				<!-- Imprimir enlaces para cambiar de idioma -->
-
-
 
 			<?php foreach ($productos_idioma as $producto) { 
 					// Obtener el valor de 'l' del GET, o establecerlo en 'en' por defecto si no está definido
@@ -260,7 +258,7 @@ if (array_key_exists($idioma, $productos)) {
    		   <?php } ?>
 
 			</div>
-		<?php } else { // mostramos las instrucciones en el idioma?>
+		<?php } else{ // mostramos las instrucciones en el idioma?>
 			<div class="row">
 			<div class="col-xs-12 col-md-6 col-lg-5">
 			<?php if ($_GET['p']){
